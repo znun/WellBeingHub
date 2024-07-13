@@ -10,6 +10,8 @@ import CoreData
 
 class ViewController: UIViewController {
     
+    let context = CoreDataManager.shared.context
+    
     // UI Elements
     let stepsTextField = UITextField()
     let waterIntakeTextField = UITextField()
@@ -122,7 +124,19 @@ class ViewController: UIViewController {
     }
 
     @objc private func saveData() {
+        guard let steps = Int64(stepsTextField.text ?? ""),
+              let waterIntake = Double(waterIntakeTextField.text ?? ""),
+              let sleepHours = Double(sleepHoursTextField.text ?? ""),
+              let meals = mealsTextField.text else {return}
         
+        let healthData = HealthData(context: context)
+        healthData.date = Date()
+        healthData.steps = steps
+        healthData.waterIntake = waterIntake
+        healthData.sleepHours = sleepHours
+        healthData.meals = meals
+        
+        CoreDataManager.shared.saveContext()
     }
     
     @objc private func fetchData() {
